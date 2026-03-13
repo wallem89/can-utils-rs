@@ -146,19 +146,15 @@ sudo modprobe vcan
 
 ## Design
 
-The library separates concerns into several layers:
+Current module layout:
 
 ```text
-Prompt layer
-    ↓
-Config model
-    ↓
-Command plan
-    ↓
-Command execution
+setup::models  - shared types and configuration structs
+setup::prompt  - interactive inquire-based prompt flow
+setup::plan    - command planning / preview generation
+setup::exec    - command execution and interface lifecycle helpers
+setup::mod     - high-level orchestration entrypoints
 ```
-
-This allows the setup logic to be reused without the interactive UI.
 
 ---
 
