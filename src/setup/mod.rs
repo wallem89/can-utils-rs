@@ -4,6 +4,7 @@ use inquire::Select;
 pub mod exec;
 pub mod models;
 pub mod plan;
+pub mod prereqs;
 pub mod prompt;
 
 use exec::{ensure_interface_name_is_available, execute_config};
@@ -12,6 +13,7 @@ use plan::print_plan;
 use prompt::{prompt_native, prompt_slcan, prompt_virtual};
 
 pub fn run_interactive() -> Result<()> {
+    prereqs::handle_missing_prerequisites()?;
     let mode = Select::new(
         "Select CAN connection type:",
         vec![CanMode::Native, CanMode::Slcan, CanMode::Virtual],

@@ -113,7 +113,7 @@ pub fn execute_config(config: &AppConfig) -> Result<()> {
     Ok(())
 }
 
-pub fn run_sudo(args: &[&str]) -> Result<()> {
+pub(crate) fn run_sudo(args: &[&str]) -> Result<()> {
     let status = Command::new("sudo")
         .args(args)
         .stdin(Stdio::inherit())
