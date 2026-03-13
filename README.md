@@ -1,4 +1,4 @@
-# CAN utils (Controller Area Network utilities)
+# Controller Area Network utilities (CAN utils)
 
 [![Maintenance: actively-developed](https://img.shields.io/badge/maintenance-actively--developed-brightgreen.svg)](https://github.com/rust-lang/cargo/issues/4121)
 [![VERSION](https://img.shields.io/crates/v/can-utils-rs.svg)](https://crates.io/crates/can-utils-rs)
@@ -11,7 +11,6 @@
 <!-- DO NOT EDIT TEXT BELOW THIS LINE -->
 <!-- cargo-rdme start -->
 
-## CAN Setup Utility
 
 A Rust library and CLI utility for creating and managing Linux CAN interfaces.
 
@@ -21,9 +20,8 @@ The tool supports setting up:
 - **SLCAN serial CAN adapters** (`slcan0` via `slcand`)
 - **Virtual CAN interfaces** (`vcan0` for testing)
 
-It provides an interactive wizard similar to tools like `esp-generate`
-that helps users configure CAN interfaces without remembering the exact
-`ip` or `slcand` commands.
+It provides an interactive wizard that helps users configure CAN interfaces
+without remembering the exact `ip` or `slcand` commands.
 
 The library can also be used programmatically to generate and execute
 CAN setup commands.

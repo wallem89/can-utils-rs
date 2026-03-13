@@ -1,4 +1,3 @@
-//! # CAN Setup Utility
 //!
 //! A Rust library and CLI utility for creating and managing Linux CAN interfaces.
 //!
@@ -8,9 +7,8 @@
 //! - **SLCAN serial CAN adapters** (`slcan0` via `slcand`)
 //! - **Virtual CAN interfaces** (`vcan0` for testing)
 //!
-//! It provides an interactive wizard similar to tools like `esp-generate`
-//! that helps users configure CAN interfaces without remembering the exact
-//! `ip` or `slcand` commands.
+//! It provides an interactive wizard that helps users configure CAN interfaces
+//! without remembering the exact `ip` or `slcand` commands.
 //!
 //! The library can also be used programmatically to generate and execute
 //! CAN setup commands.
