@@ -12,8 +12,8 @@ keywords = ["automotive", "can-utils", "socketcan", "linux", "ecu"]
 categories = [
     "network-programming",
     "os::linux-apis",
-    "embedded-development",
     "hardware-support",
+    "automotive",
 ]
 
 [dependencies]
