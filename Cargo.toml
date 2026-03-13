@@ -8,17 +8,7 @@ description = "A pure Rust CLI utility for managing and manipulating CAN interfa
 homepage = "https://github.com/wallem89/can-utils-rs"
 repository = "https://github.com/wallem89/can-utils-rs"
 readme = "README.md"
-keywords = [
-    "can",
-    "can-utils",
-    "socketcan",
-    "linux",
-    "networking",
-    "cli",
-    "utility",
-    "ecu",
-    "automotive",
-]
+keywords = ["automotive", "can-utils", "socketcan", "linux", "ecu"]
 categories = [
     "network-programming",
     "os::linux-apis",
