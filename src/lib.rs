@@ -55,18 +55,17 @@
 //!
 //! ---
 //!
-//! # Install and Usage
+//! # Install
 //!
 //! The library can be installed to create or manage interfaces.
 //!
-//! ```
+//! ```text
 //! cargo install --path .
 //! ```
 //!
-//! Running `can-utils-rs` starts the interactive configuration wizard.
 //! ---
 //!
-//! # CLI Usage
+//! # Usage
 //!
 //! Running the binary starts an interactive configuration wizard.
 //!
