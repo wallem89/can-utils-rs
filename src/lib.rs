@@ -55,19 +55,15 @@
 //!
 //! ---
 //!
-//! # Example Usage (Library)
+//! # Install and Usage
 //!
-//! The library can be used directly to create or manage interfaces.
+//! The library can be installed to create or manage interfaces.
 //!
-//! ```no_run
-//! use can_utils_rs::run_interactive;
-//!
-//! fn main() -> anyhow::Result<()> {
-//!     run_interactive()?;
-//!     Ok(())
-//! }
+//! ```
+//! cargo install --path .
 //! ```
 //!
+//! Running `can-utils-rs` starts the interactive configuration wizard.
 //! ---
 //!
 //! # CLI Usage
