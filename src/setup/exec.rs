@@ -72,13 +72,18 @@ pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<Inte
 }
 
 pub fn execute_existing_set_up(config: &CanConfig) -> Result<()> {
-    let iface = match config {
-        CanConfig::Native(cfg) => cfg.iface.as_str(),
-        CanConfig::Slcan(cfg) => cfg.iface.as_str(),
-        CanConfig::Virtual(cfg) => cfg.iface.as_str(),
+    match config {
+        CanConfig::Native(cfg) => {
+            execute_config(&CanConfig::Native(cfg.clone()))?;
+        }
+        CanConfig::Slcan(cfg) => {
+            run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
+        }
+        CanConfig::Virtual(cfg) => {
+            run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
+        }
     };
     // For any type interface just make sure to bring it up, as it should already be configured correctly if it exists
-    run_sudo(&["ip", "link", "set", "up", iface])?;
     Ok(())
 }
 
