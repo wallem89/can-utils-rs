@@ -32,6 +32,16 @@ pub fn remove_existing_interface(config: &CanConfig) -> Result<()> {
     Ok(())
 }
 
+pub fn check_interface_already_available(config: &mut CanConfig) -> Result<InterfaceResolution> {
+    let iface = config.iface().to_string();
+
+    if interface_exists(&iface) {
+        Ok(InterfaceResolution::SkipSetup)
+    } else {
+        Ok(InterfaceResolution::Proceed)
+    }
+}
+
 pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<InterfaceResolution> {
     loop {
         let iface = config.iface().to_string();

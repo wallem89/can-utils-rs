@@ -7,14 +7,14 @@ pub mod plan;
 pub mod prereqs;
 pub mod prompt;
 
-use exec::{ensure_interface_name_is_available, execute_config};
+use exec::{check_interface_already_available, ensure_interface_name_is_available, execute_config};
 use models::{CanConfig, CanMode, InterfaceResolution};
 use plan::print_plan;
 use prompt::{prompt_native, prompt_slcan, prompt_virtual};
 
 /// Set up a CAN interface without a CLI based on the provided configuration, handling existing interfaces as needed.
 pub fn setup(mut config: CanConfig) -> Result<()> {
-    if ensure_interface_name_is_available(&mut config)? == InterfaceResolution::SkipSetup {
+    if check_interface_already_available(&mut config)? == InterfaceResolution::SkipSetup {
         println!(
             "Keeping existing interface '{}' and skipping setup.",
             config.iface()

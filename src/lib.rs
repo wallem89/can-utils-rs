@@ -184,6 +184,7 @@
 //! # Use as a Library
 //! ## Import
 //! ```bash
+//! cargo add anyhow
 //! cargo add can-utils-rs
 //! ```
 //!
