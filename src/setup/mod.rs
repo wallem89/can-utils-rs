@@ -8,16 +8,32 @@ pub mod prereqs;
 pub mod prompt;
 
 use exec::{ensure_interface_name_is_available, execute_config};
-use models::{AppConfig, CanMode, InterfaceResolution};
+use models::{CanConfig, CanMode, InterfaceResolution};
 use plan::print_plan;
 use prompt::{prompt_native, prompt_slcan, prompt_virtual};
 
-pub fn run_setup() -> Result<()> {
-    let _ = run_setup_and_return_config()?;
+/// Set up a CAN interface without a CLI based on the provided configuration, handling existing interfaces as needed.
+pub fn setup(mut config: CanConfig) -> Result<()> {
+    if ensure_interface_name_is_available(&mut config)? == InterfaceResolution::SkipSetup {
+        println!(
+            "Keeping existing interface '{}' and skipping setup.",
+            config.iface()
+        );
+        return Ok(());
+    }
+
+    execute_config(&config)?;
+    println!("Set-up new interface '{}' successfully.", config.iface());
+
     Ok(())
 }
 
-pub fn run_setup_and_return_config() -> Result<Option<AppConfig>> {
+pub fn run_setup_from_cli() -> Result<()> {
+    let _ = run_setup_from_cli_and_return_config()?;
+    Ok(())
+}
+
+pub fn run_setup_from_cli_and_return_config() -> Result<Option<CanConfig>> {
     prereqs::handle_missing_prerequisites()?;
 
     let mode = Select::new(
@@ -28,9 +44,9 @@ pub fn run_setup_and_return_config() -> Result<Option<AppConfig>> {
     .context("failed to read CAN mode")?;
 
     let mut config = match mode {
-        CanMode::Native => AppConfig::Native(prompt_native()?),
-        CanMode::Slcan => AppConfig::Slcan(prompt_slcan()?),
-        CanMode::Virtual => AppConfig::Virtual(prompt_virtual()?),
+        CanMode::Native => CanConfig::Native(prompt_native()?),
+        CanMode::Slcan => CanConfig::Slcan(prompt_slcan()?),
+        CanMode::Virtual => CanConfig::Virtual(prompt_virtual()?),
     };
 
     if ensure_interface_name_is_available(&mut config)? == InterfaceResolution::SkipSetup {

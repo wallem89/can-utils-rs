@@ -1,7 +1,7 @@
 use anyhow::{Context, Result, bail};
 use std::process::{Command, Stdio};
 
-use crate::setup::models::{AppConfig, ExistingIfaceAction, InterfaceResolution};
+use crate::setup::models::{CanConfig, ExistingIfaceAction, InterfaceResolution};
 use crate::setup::prompt::{prompt_existing_interface_action, prompt_new_interface_name};
 
 pub fn interface_exists(iface: &str) -> bool {
@@ -12,19 +12,19 @@ pub fn interface_exists(iface: &str) -> bool {
         .unwrap_or(false)
 }
 
-pub fn remove_existing_interface(config: &AppConfig) -> Result<()> {
+pub fn remove_existing_interface(config: &CanConfig) -> Result<()> {
     let iface = config.iface();
 
     let _ = run_sudo(&["ip", "link", "set", iface, "down"]);
 
     match config {
-        AppConfig::Native(_) => {
+        CanConfig::Native(_) => {
             // Physical CAN interfaces are usually reconfigured after bringing them down.
         }
-        AppConfig::Slcan(_) => {
+        CanConfig::Slcan(_) => {
             let _ = run_sudo(&["slcand", "-k", iface]);
         }
-        AppConfig::Virtual(_) => {
+        CanConfig::Virtual(_) => {
             run_sudo(&["ip", "link", "delete", iface])?;
         }
     }
@@ -32,7 +32,7 @@ pub fn remove_existing_interface(config: &AppConfig) -> Result<()> {
     Ok(())
 }
 
-pub fn ensure_interface_name_is_available(config: &mut AppConfig) -> Result<InterfaceResolution> {
+pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<InterfaceResolution> {
     loop {
         let iface = config.iface().to_string();
 
@@ -59,10 +59,10 @@ pub fn ensure_interface_name_is_available(config: &mut AppConfig) -> Result<Inte
     }
 }
 
-pub fn execute_config(config: &AppConfig) -> Result<()> {
+pub fn execute_config(config: &CanConfig) -> Result<()> {
     match config {
-        AppConfig::Native(cfg) => {
-            let bitrate = cfg.bitrate.bitrate.to_string();
+        CanConfig::Native(cfg) => {
+            let bitrate = cfg.bitrate.bitrate().to_string();
             run_sudo(&[
                 "ip",
                 "link",
@@ -75,7 +75,7 @@ pub fn execute_config(config: &AppConfig) -> Result<()> {
                 bitrate.as_str(),
             ])?;
         }
-        AppConfig::Slcan(cfg) => {
+        CanConfig::Slcan(cfg) => {
             let speed_arg = format!("-{}", cfg.speed.flag);
             let baud_arg = cfg.uart_baud.to_string();
 
@@ -95,7 +95,7 @@ pub fn execute_config(config: &AppConfig) -> Result<()> {
 
             run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
         }
-        AppConfig::Virtual(cfg) => {
+        CanConfig::Virtual(cfg) => {
             run_sudo(&[
                 "ip",
                 "link",

@@ -4,7 +4,7 @@ use std::{fs, path::PathBuf};
 
 use crate::setup::models::{
     CanBitrate, ExistingIfaceAction, NativeConfig, SlcanConfig, SlcanSpeed, VirtualConfig,
-    can_bitrates, slcan_speeds,
+    slcan_speeds,
 };
 
 pub fn list_serial_candidates() -> Result<Vec<String>> {
@@ -55,7 +55,8 @@ pub fn prompt_native() -> Result<NativeConfig> {
     let iface = Text::new("CAN interface name:")
         .with_default("can0")
         .prompt()?;
-    let bitrate: CanBitrate = Select::new("Select CAN bitrate:", can_bitrates()).prompt()?;
+    let bitrate: CanBitrate =
+        Select::new("Select CAN bitrate:", CanBitrate::can_bitrates()).prompt()?;
 
     Ok(NativeConfig { iface, bitrate })
 }
