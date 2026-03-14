@@ -1,7 +1,7 @@
 use anyhow::{Context, Result, bail};
 use std::process::{Command, Stdio};
 
-use crate::setup::models::{AppConfig, ExistingIfaceAction, InterfaceResolution};
+use crate::setup::models::{CanConfig, ExistingIfaceAction, InterfaceResolution};
 use crate::setup::prompt::{prompt_existing_interface_action, prompt_new_interface_name};
 
 pub fn interface_exists(iface: &str) -> bool {
@@ -12,19 +12,28 @@ pub fn interface_exists(iface: &str) -> bool {
         .unwrap_or(false)
 }
 
-pub fn remove_existing_interface(config: &AppConfig) -> Result<()> {
+pub fn interface_is_up(iface: &str) -> bool {
+    if let Ok(output) = Command::new("ip").args(["link", "show", iface]).output() {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        stdout.contains("UP")
+    } else {
+        false
+    }
+}
+
+pub fn remove_existing_interface(config: &CanConfig) -> Result<()> {
     let iface = config.iface();
 
     let _ = run_sudo(&["ip", "link", "set", iface, "down"]);
 
     match config {
-        AppConfig::Native(_) => {
+        CanConfig::Native(_) => {
             // Physical CAN interfaces are usually reconfigured after bringing them down.
         }
-        AppConfig::Slcan(_) => {
+        CanConfig::Slcan(_) => {
             let _ = run_sudo(&["slcand", "-k", iface]);
         }
-        AppConfig::Virtual(_) => {
+        CanConfig::Virtual(_) => {
             run_sudo(&["ip", "link", "delete", iface])?;
         }
     }
@@ -32,7 +41,25 @@ pub fn remove_existing_interface(config: &AppConfig) -> Result<()> {
     Ok(())
 }
 
-pub fn ensure_interface_name_is_available(config: &mut AppConfig) -> Result<InterfaceResolution> {
+pub fn check_interface_already_available(config: &mut CanConfig) -> Result<InterfaceResolution> {
+    let iface = config.iface().to_string();
+
+    if interface_exists(&iface) {
+        if interface_is_up(&iface) {
+            println!(
+                "Interface '{}' already exists and is up. Assuming it's correctly configured.",
+                iface
+            );
+        } else {
+            execute_bring_up(config)?;
+        }
+        Ok(InterfaceResolution::SkipSetup)
+    } else {
+        Ok(InterfaceResolution::Proceed)
+    }
+}
+
+pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<InterfaceResolution> {
     loop {
         let iface = config.iface().to_string();
 
@@ -50,6 +77,7 @@ pub fn ensure_interface_name_is_available(config: &mut AppConfig) -> Result<Inte
                 config.set_iface(new_iface);
             }
             ExistingIfaceAction::Skip => {
+                execute_bring_up(config)?;
                 return Ok(InterfaceResolution::SkipSetup);
             }
             ExistingIfaceAction::Cancel => {
@@ -59,10 +87,26 @@ pub fn ensure_interface_name_is_available(config: &mut AppConfig) -> Result<Inte
     }
 }
 
-pub fn execute_config(config: &AppConfig) -> Result<()> {
+pub fn execute_bring_up(config: &CanConfig) -> Result<()> {
     match config {
-        AppConfig::Native(cfg) => {
-            let bitrate = cfg.bitrate.bitrate.to_string();
+        CanConfig::Native(cfg) => {
+            execute_config(&CanConfig::Native(cfg.clone()))?;
+        }
+        CanConfig::Slcan(cfg) => {
+            run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
+        }
+        CanConfig::Virtual(cfg) => {
+            run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
+        }
+    };
+    // For any type interface just make sure to bring it up, as it should already be configured correctly if it exists
+    Ok(())
+}
+
+pub fn execute_config(config: &CanConfig) -> Result<()> {
+    match config {
+        CanConfig::Native(cfg) => {
+            let bitrate = cfg.bitrate.bitrate().to_string();
             run_sudo(&[
                 "ip",
                 "link",
@@ -75,7 +119,7 @@ pub fn execute_config(config: &AppConfig) -> Result<()> {
                 bitrate.as_str(),
             ])?;
         }
-        AppConfig::Slcan(cfg) => {
+        CanConfig::Slcan(cfg) => {
             let speed_arg = format!("-{}", cfg.speed.flag);
             let baud_arg = cfg.uart_baud.to_string();
 
@@ -95,7 +139,7 @@ pub fn execute_config(config: &AppConfig) -> Result<()> {
 
             run_sudo(&["ip", "link", "set", "up", cfg.iface.as_str()])?;
         }
-        AppConfig::Virtual(cfg) => {
+        CanConfig::Virtual(cfg) => {
             run_sudo(&[
                 "ip",
                 "link",
