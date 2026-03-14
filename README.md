@@ -197,6 +197,7 @@ Before applying changes the tool prints the commands that will run.
 ## Use as a Library
 ### Import
 ```bash
+cargo add anyhow
 cargo add can-utils-rs
 ```
 
