@@ -12,6 +12,15 @@ pub fn interface_exists(iface: &str) -> bool {
         .unwrap_or(false)
 }
 
+pub fn interface_is_up(iface: &str) -> bool {
+    if let Ok(output) = Command::new("ip").args(["link", "show", iface]).output() {
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        stdout.contains("UP")
+    } else {
+        false
+    }
+}
+
 pub fn remove_existing_interface(config: &CanConfig) -> Result<()> {
     let iface = config.iface();
 
@@ -36,7 +45,14 @@ pub fn check_interface_already_available(config: &mut CanConfig) -> Result<Inter
     let iface = config.iface().to_string();
 
     if interface_exists(&iface) {
-        execute_existing_set_up(config)?;
+        if interface_is_up(&iface) {
+            println!(
+                "Interface '{}' already exists and is up. Assuming it's correctly configured.",
+                iface
+            );
+        } else {
+            execute_bring_up(config)?;
+        }
         Ok(InterfaceResolution::SkipSetup)
     } else {
         Ok(InterfaceResolution::Proceed)
@@ -61,7 +77,7 @@ pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<Inte
                 config.set_iface(new_iface);
             }
             ExistingIfaceAction::Skip => {
-                execute_existing_set_up(config)?;
+                execute_bring_up(config)?;
                 return Ok(InterfaceResolution::SkipSetup);
             }
             ExistingIfaceAction::Cancel => {
@@ -71,7 +87,7 @@ pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<Inte
     }
 }
 
-pub fn execute_existing_set_up(config: &CanConfig) -> Result<()> {
+pub fn execute_bring_up(config: &CanConfig) -> Result<()> {
     match config {
         CanConfig::Native(cfg) => {
             execute_config(&CanConfig::Native(cfg.clone()))?;
