@@ -36,6 +36,7 @@ pub fn check_interface_already_available(config: &mut CanConfig) -> Result<Inter
     let iface = config.iface().to_string();
 
     if interface_exists(&iface) {
+        execute_existing_set_up(config)?;
         Ok(InterfaceResolution::SkipSetup)
     } else {
         Ok(InterfaceResolution::Proceed)
@@ -60,6 +61,7 @@ pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<Inte
                 config.set_iface(new_iface);
             }
             ExistingIfaceAction::Skip => {
+                execute_existing_set_up(config)?;
                 return Ok(InterfaceResolution::SkipSetup);
             }
             ExistingIfaceAction::Cancel => {
@@ -67,6 +69,17 @@ pub fn ensure_interface_name_is_available(config: &mut CanConfig) -> Result<Inte
             }
         }
     }
+}
+
+pub fn execute_existing_set_up(config: &CanConfig) -> Result<()> {
+    let iface = match config {
+        CanConfig::Native(cfg) => cfg.iface.as_str(),
+        CanConfig::Slcan(cfg) => cfg.iface.as_str(),
+        CanConfig::Virtual(cfg) => cfg.iface.as_str(),
+    };
+    // For any type interface just make sure to bring it up, as it should already be configured correctly if it exists
+    run_sudo(&["ip", "link", "set", "up", iface])?;
+    Ok(())
 }
 
 pub fn execute_config(config: &CanConfig) -> Result<()> {
