@@ -151,6 +151,11 @@
 //!
 //! ---
 //!
+//! # Demo
+//! ![can-utils-rs demo](demo/setup-and-dump.gif)
+//!
+//! ---
+//!
 //! # Usage
 //!
 //! Running the binary launches an interactive menu.

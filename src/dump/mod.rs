@@ -19,7 +19,7 @@ pub fn run_dump_wizard() -> Result<()> {
 
     ifaces.push("Enter manually".into());
 
-    let choice = Select::new("Select CAN interface to dump", ifaces).prompt()?;
+    let choice = Select::new("Select CAN interface to dump:", ifaces).prompt()?;
 
     let iface = if choice == "Enter manually" {
         Text::new("Enter interface name").prompt()?
@@ -27,7 +27,9 @@ pub fn run_dump_wizard() -> Result<()> {
         choice
     };
 
-    println!("Starting dump on {}", iface);
+    println!("{} {}", "Pretty CAN Dump on".bold(), iface.cyan().bold());
+
+    println!("{}", "Press Ctrl+C to stop.".yellow());
 
     live::dump_raw(&iface)?;
 
