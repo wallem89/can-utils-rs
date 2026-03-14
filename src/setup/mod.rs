@@ -12,8 +12,14 @@ use models::{AppConfig, CanMode, InterfaceResolution};
 use plan::print_plan;
 use prompt::{prompt_native, prompt_slcan, prompt_virtual};
 
-pub fn run_interactive() -> Result<()> {
+pub fn run_setup() -> Result<()> {
+    let _ = run_setup_and_return_config()?;
+    Ok(())
+}
+
+pub fn run_setup_and_return_config() -> Result<Option<AppConfig>> {
     prereqs::handle_missing_prerequisites()?;
+
     let mode = Select::new(
         "Select CAN connection type:",
         vec![CanMode::Native, CanMode::Slcan, CanMode::Virtual],
@@ -32,7 +38,7 @@ pub fn run_interactive() -> Result<()> {
             "Keeping existing interface '{}' and skipping setup.",
             config.iface()
         );
-        return Ok(());
+        return Ok(Some(config));
     }
 
     print_plan(&config);
@@ -49,5 +55,5 @@ pub fn run_interactive() -> Result<()> {
         println!("Done.");
     }
 
-    Ok(())
+    Ok(Some(config))
 }

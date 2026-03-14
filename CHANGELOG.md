@@ -7,6 +7,7 @@ and this project adheres to [Rust Semantic Versioning](https://doc.rust-lang.org
 ## [Unreleased]
 ### Added
 - Check and option to install prerequisites
+- Pretty CAN dump
 
 ## [0.1.0] - 2026-03-13
 ### Added
