@@ -215,6 +215,8 @@
 //!   Cancel
 //! ```
 //!
+//! When using this crate as a library an existing interface with the same name will be replaced
+//!
 //! When replacing an interface the tool will:
 //!
 //! - bring the interface down
