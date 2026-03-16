@@ -143,7 +143,8 @@ sudo ip link set up vcan0
 
 ---
 
-## Installation
+## CLI
+### Installation
 
 Install the CLI locally with Cargo:
 
@@ -164,12 +165,12 @@ can-utils-rs
 
 ---
 
-## Demo
+### Demo
 ![can-utils-rs demo](demo/setup-and-dump.gif)
 
 ---
 
-## Usage
+### CLI Usage
 
 Running the binary launches an interactive menu.
 
@@ -192,6 +193,27 @@ The setup workflow asks for:
 Before applying changes the tool prints the commands that will run.
 
 ---
+
+## Use as a Library
+### Import
+```bash
+cargo add anyhow
+cargo add can-utils-rs
+```
+
+### Example
+Example for native CAN interface `can0`
+```rust
+use can_utils_rs::{CanConfig, NativeConfig, CanBitrate, setup};
+
+fn main() -> anyhow::Result<()> {
+   let config = CanConfig::Native(NativeConfig::new("can0".to_string(), CanBitrate::B500K));
+   setup::setup(config)?;
+   Ok(())
+
+   // Use your CAN interface with SocketCAN via socketcan crate
+}
+```
 
 ## Interface Safety
 

@@ -130,7 +130,8 @@
 //!
 //! ---
 //!
-//! # Installation
+//! # CLI
+//! ## Installation
 //!
 //! Install the CLI locally with Cargo:
 //!
@@ -151,12 +152,12 @@
 //!
 //! ---
 //!
-//! # Demo
+//! ## Demo
 //! ![can-utils-rs demo](demo/setup-and-dump.gif)
 //!
 //! ---
 //!
-//! # Usage
+//! ## CLI Usage
 //!
 //! Running the binary launches an interactive menu.
 //!
@@ -179,6 +180,27 @@
 //! Before applying changes the tool prints the commands that will run.
 //!
 //! ---
+//!
+//! # Use as a Library
+//! ## Import
+//! ```bash
+//! cargo add anyhow
+//! cargo add can-utils-rs
+//! ```
+//!
+//! ## Example
+//! Example for native CAN interface `can0`
+//! ```no_run
+//! use can_utils_rs::{CanConfig, NativeConfig, CanBitrate, setup};
+//!
+//!fn main() -> anyhow::Result<()> {
+//!    let config = CanConfig::Native(NativeConfig::new("can0".to_string(), CanBitrate::B500K));
+//!    setup::setup(config)?;
+//!    Ok(())
+//!
+//!    // Use your CAN interface with SocketCAN via socketcan crate
+//! }
+//!```
 //!
 //! # Interface Safety
 //!
@@ -251,8 +273,8 @@ use anyhow::Result;
 use inquire::Select;
 use std::fmt;
 
-pub use setup::models::{
-    AppConfig, CanBitrate, CanMode, ExistingIfaceAction, InterfaceResolution, NativeConfig,
+pub use crate::setup::models::{
+    CanBitrate, CanConfig, CanMode, ExistingIfaceAction, InterfaceResolution, NativeConfig,
     SlcanConfig, SlcanSpeed, VirtualConfig,
 };
 pub mod dump;
@@ -290,7 +312,7 @@ pub fn run_interactive() -> Result<()> {
 
     match action {
         ToolAction::Setup => {
-            setup::run_setup()?;
+            setup::run_setup_from_cli()?;
         }
 
         ToolAction::Dump => {
@@ -298,7 +320,7 @@ pub fn run_interactive() -> Result<()> {
         }
 
         ToolAction::SetupAndDump => {
-            if let Some(config) = setup::run_setup_and_return_config()? {
+            if let Some(config) = setup::run_setup_from_cli_and_return_config()? {
                 dump::run_dump(config.iface())?;
             }
         }

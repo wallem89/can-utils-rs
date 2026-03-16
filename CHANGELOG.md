@@ -6,6 +6,9 @@ and this project adheres to [Rust Semantic Versioning](https://doc.rust-lang.org
 
 ## [Unreleased]
 
+### Added
+- API to set-up a CAN bus without a CLI
+
 ## [0.2.0] - 2026-03-14
 ### Added
 - Check and option to install prerequisites
