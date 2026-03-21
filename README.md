@@ -23,6 +23,7 @@ The tool currently supports:
 - Creating and managing Linux CAN interfaces
 - Automatic installation of required system prerequisites
 - Pretty, colorized CAN frame dumping
+- Easy CAN frame sending once or cyclically
 
 The goal of this project is to provide a **friendlier and more visual
 alternative to common Linux CAN tools** such as `candump`, while still
@@ -166,7 +167,14 @@ can-utils-rs
 ---
 
 ### Demo
-![can-utils-rs demo](demo/setup-and-dump.gif)
+Set-up and CAN dump
+
+![can-utils-rs dump demo](demo/setup-and-dump.gif)
+
+
+CAN send and CAN dump
+
+![can-utils-rs send and dump demo](demo/dump_and_send.gif)
 
 ---
 
@@ -181,6 +189,7 @@ $ can-utils-rs
 ❯ Create or manage a CAN interface
   Start pretty CAN dump
   Create/manage CAN interface then start dump
+  Send CAN frame(s)
 ```
 
 The setup workflow asks for:
@@ -228,7 +237,7 @@ Interface 'can0' already exists.
   Cancel
 ```
 
-When using this crate as a library an existing interface with the same name will be replaced
+When using this crate as a library an existing interface with the same name will be replaced.
 
 When replacing an interface the tool will:
 
