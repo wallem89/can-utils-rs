@@ -1,10 +1,10 @@
 [package]
 name = "can-utils-rs"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2024"
 authors = ["Willem Roovers <willemroovers@protonmail.com>"]
 license = "MIT"
-description = "A pure Rust CLI utility for managing and manipulating CAN interfaces and printing pretty CAN data."
+description = "A pure Rust CLI utility for managing and manipulating CAN interfaces and sending or printing pretty CAN data."
 homepage = "https://github.com/wallem89/can-utils-rs"
 repository = "https://github.com/wallem89/can-utils-rs"
 readme = "README.md"
