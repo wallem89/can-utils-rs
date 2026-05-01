@@ -108,7 +108,7 @@ pub fn slcan_speeds() -> Vec<SlcanSpeed> {
         },
     ];
 
-    speeds.sort_by(|a, b| b.bitrate.cmp(&a.bitrate));
+    speeds.sort_by_key(|b| std::cmp::Reverse(b.bitrate));
     speeds
 }
 
