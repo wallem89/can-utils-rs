@@ -6,6 +6,10 @@ and this project adheres to [Rust Semantic Versioning](https://doc.rust-lang.org
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-05-01
+### Changed
+- Bump Rust version
+
 ## [0.4.0] - 2026-03-21
 ### Added
 - CAN send option to CLI for one message or cyclic message sending
