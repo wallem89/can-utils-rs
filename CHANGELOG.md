@@ -6,6 +6,9 @@ and this project adheres to [Rust Semantic Versioning](https://doc.rust-lang.org
 
 ## [Unreleased]
 
+### Added
+- CAN dump adds option to filter on one or more identifiers
+
 ## [0.4.1] - 2026-05-01
 ### Changed
 - Bump Rust version
