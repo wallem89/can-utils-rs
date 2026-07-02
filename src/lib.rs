@@ -59,8 +59,29 @@
 //! - highlighted interface name
 //! - colored CAN IDs
 //! - **per-byte coloring of payload data**
+//! - optional filtering by one or more CAN IDs
 //!
 //! This makes it significantly easier to visually scan CAN traffic.
+//!
+//!
+//! When starting a dump, the wizard can dump all frames or filter traffic by
+//! CAN ID. Enter one or more comma-separated IDs:
+//!
+//! ```text
+//! 123,456
+//! ```
+//!
+//! The tool applies the standard CAN mask automatically, equivalent to:
+//!
+//! ```text
+//! candump can3,0x123:0x7FF,0x456:0x7FF
+//! ```
+//!
+//! You can also enter explicit `candump`-style filters directly:
+//!
+//! ```text
+//! 0x123:0x7FF,0x456:0x7FF
+//! ```
 //!
 //! ---
 //!
