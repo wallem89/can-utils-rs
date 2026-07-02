@@ -6,6 +6,7 @@ and this project adheres to [Rust Semantic Versioning](https://doc.rust-lang.org
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-02
 ### Added
 - CAN dump adds option to filter on one or more identifiers
 
