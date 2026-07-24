@@ -6,6 +6,8 @@ use std::process::Command;
 mod format;
 mod live;
 
+pub(crate) use format::format_frame;
+
 pub fn run_dump(iface: &str) -> anyhow::Result<()> {
     println!("{} {}", "Pretty CAN Dump on".bold(), iface.cyan().bold());
 
@@ -36,7 +38,7 @@ pub fn run_dump_wizard() -> Result<()> {
     Ok(())
 }
 
-fn detect_can_interfaces() -> Result<Vec<String>> {
+pub(crate) fn detect_can_interfaces() -> Result<Vec<String>> {
     let output = Command::new("ip").args(["-brief", "link"]).output()?;
 
     let stdout = String::from_utf8_lossy(&output.stdout);

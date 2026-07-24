@@ -95,6 +95,33 @@ pub fn install_missing_prerequisites(missing: &[Prerequisite]) -> Result<()> {
         return Ok(());
     }
 
+    let packages = packages_for_missing_prerequisites(missing)?;
+
+    println!("The following packages will be installed:");
+    for pkg in &packages {
+        println!("  - {pkg}");
+    }
+    println!();
+
+    let confirm = Select::new("Proceed with installation?", vec!["Yes", "No"]).prompt()?;
+
+    if confirm != "Yes" {
+        bail!("installation cancelled by user");
+    }
+
+    install_prerequisite_packages(&packages)
+}
+
+pub fn install_missing_prerequisites_without_prompt(missing: &[Prerequisite]) -> Result<()> {
+    if missing.is_empty() {
+        return Ok(());
+    }
+
+    let packages = packages_for_missing_prerequisites(missing)?;
+    install_prerequisite_packages(&packages)
+}
+
+pub fn packages_for_missing_prerequisites(missing: &[Prerequisite]) -> Result<Vec<&'static str>> {
     if !has_apt() {
         bail!("automatic installation is currently only supported on apt-based systems");
     }
@@ -114,16 +141,12 @@ pub fn install_missing_prerequisites(missing: &[Prerequisite]) -> Result<()> {
     packages.sort_unstable();
     packages.dedup();
 
-    println!("The following packages will be installed:");
-    for pkg in &packages {
-        println!("  - {pkg}");
-    }
-    println!();
+    Ok(packages)
+}
 
-    let confirm = Select::new("Proceed with installation?", vec!["Yes", "No"]).prompt()?;
-
-    if confirm != "Yes" {
-        bail!("installation cancelled by user");
+fn install_prerequisite_packages(packages: &[&str]) -> Result<()> {
+    if packages.is_empty() {
+        return Ok(());
     }
 
     run_sudo(&["apt", "update"])?;

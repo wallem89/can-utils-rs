@@ -281,7 +281,6 @@
 //!
 //! ---
 use anyhow::Result;
-use inquire::Select;
 use std::fmt;
 
 pub use crate::setup::models::{
@@ -291,9 +290,10 @@ pub use crate::setup::models::{
 pub mod dump;
 pub mod send;
 pub mod setup;
+mod ui;
 
 #[derive(Debug, Clone, Copy)]
-enum ToolAction {
+pub(crate) enum ToolAction {
     Setup,
     Dump,
     SetupAndDump,
@@ -313,18 +313,7 @@ impl fmt::Display for ToolAction {
     }
 }
 
-pub fn run_interactive() -> Result<()> {
-    let action = Select::new(
-        "What do you want to do?",
-        vec![
-            ToolAction::Setup,
-            ToolAction::Dump,
-            ToolAction::SetupAndDump,
-            ToolAction::Send,
-        ],
-    )
-    .prompt()?;
-
+pub(crate) fn run_action(action: ToolAction) -> Result<()> {
     match action {
         ToolAction::Setup => {
             setup::run_setup_from_cli()?;
@@ -345,4 +334,8 @@ pub fn run_interactive() -> Result<()> {
     }
 
     Ok(())
+}
+
+pub fn run_interactive() -> Result<()> {
+    ui::run()
 }
