@@ -1,6 +1,6 @@
 [package]
 name = "can-utils-rs"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2024"
 authors = ["Willem Roovers <willemroovers@protonmail.com>"]
 license = "MIT"
@@ -17,7 +17,7 @@ categories = [
 ]
 
 [dependencies]
-anyhow = "1.0.102"
+anyhow = "1.0.104"
 inquire = "0.9.4"
 owo-colors = "4.3.0"
-socketcan = "3.5.0"
+socketcan = "3.6.2"
